@@ -15,15 +15,16 @@ contract UserRegister {
         address myAddress;
         address referrer;
         uint registration_time;
-        uint[] investments;
-        uint[] investment_time;
-        
-      
-       
-
+        uint count;
     }
-
+  struct investments{ 
+      uint amount;
+      uint investedTime;
+    }
     mapping(address => user) public profile;
+    mapping(address =>mapping(uint => investments)) public investement;
+    // mapping(address => uint) public totalInvestment;
+    // mapping(uint => investments) public investor;
 
     /**
      *@dev Registers user and stores data
@@ -42,7 +43,7 @@ contract UserRegister {
         profile[msg.sender].registration_time= block.timestamp;
         
 
-        console.log("Registration time is :",profile[msg.sender].registration_time,"balance is",msg.sender.balance);
+        console.log("Registration time is :",profile[msg.sender].registration_time);
         
 
 }
@@ -53,22 +54,30 @@ contract UserRegister {
      * - Investor should have a minimum balance to invest.
      *Note : This function will allow user to invest an amount not less than a given amount.
      *The referrer will be recieving a 10% of invested amount as bonus for every new investment made.
-     *The investment can be done multiple times.The data will be stored in an array.
+     *The investment can be done multiple times.The data will be stored .
      *Also the investemnt time will registered to the same index;
      */
 
     function invest () public payable{
+        require(profile[msg.sender].myAddress!=address(0),"User not registered");
         require(msg.value >= 10  ,"Should have a minimum  to invest" );
-
         uint bonus = (msg.value * 100)/1000;
-        console.log("bonus is", bonus);
-        
-        payable(profile[msg.sender].referrer).transfer(bonus);
 
-        profile[msg.sender].investments.push(msg.value);
-        profile[msg.sender].investment_time.push(block.timestamp);
-        console.log("First investment amount is :",profile[msg.sender].investments[0]);
-        console.log("First investment time is :",profile[msg.sender].investment_time[0]);
+        investement[msg.sender][profile[msg.sender].count].amount = msg.value;
+        investement[msg.sender][profile[msg.sender].count].investedTime = block.timestamp;
+
+        console.log("Invested time is",investement[msg.sender][profile[msg.sender].count].investedTime);
+        console.log("No.",profile[msg.sender].count,"investment is",investement[msg.sender][profile[msg.sender].count].amount);
+
+
+        profile[msg.sender].count++;
+       
+        if(profile[msg.sender].count == 0){
+        payable(profile[msg.sender].referrer).transfer(bonus);
+        console.log("bonus is", bonus);
+        }
+        
+
 
     }
 }

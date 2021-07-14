@@ -16,14 +16,55 @@ describe("Register",  () => {
       expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
       await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
 
+      await user.connect(addr2).register(addr1.address);
+      expect((await user.profile(addr2.address)).referrer).to.be.eq(addr1.address);
+      await expect(user.connect(addr2).register(addr1.address)).to.be.revertedWith('User already registered');
+
     }) 
   })
   describe('Invest', ()=>{
     it('Should invest ',async () =>{
+     
       await user.connect(addr1).register(owner.address);
       expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
       await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
-      await user.connect(addr1).invest({value:50});
+
+      await user.connect(addr1).invest({value:500});
+    })
+
+    it('Should do multiple investment ',async () =>{
+      let count1=0;
+      let count2=0;
+      await user.connect(addr1).register(owner.address);
+      expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
+      await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
+
+      await user.connect(addr1).invest({value:500});
+      expect((await user.investement(addr1.address,count1)).amount).to.be.eq(500);
+      count1++;
+      await user.connect(addr1).invest({value:80});
+      expect((await user.investement(addr1.address,count1)).amount).to.be.eq(80);
+      count1++;
+
+      expect((await user.investement(addr1.address,0)).amount).to.be.eq(500);
+      expect((await user.investement(addr1.address,1)).amount).to.be.eq(80);
+      
+
+      await user.connect(addr2).register(addr1.address);
+      expect((await user.profile(addr2.address)).referrer).to.be.eq(addr1.address);
+      await expect(user.connect(addr2).register(addr1.address)).to.be.revertedWith('User already registered');
+
+      await user.connect(addr2).invest({value:100});
+      expect((await user.investement(addr2.address,count2)).amount).to.be.eq(100);
+      count2++;
+      await user.connect(addr2).invest({value:60});
+      expect((await user.investement(addr2.address,count2)).amount).to.be.eq(60);
+      count2++;
+
+      expect((await user.investement(addr2.address,0)).amount).to.be.eq(100);
+      expect((await user.investement(addr2.address,1)).amount).to.be.eq(60);
+
+
     })
   })
 });
