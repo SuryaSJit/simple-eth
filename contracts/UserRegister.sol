@@ -20,6 +20,7 @@ contract UserRegister {
   struct investments{ 
       uint amount;
       uint investedTime;
+      uint interest;
     }
     mapping(address => user) public profile;
     mapping(address =>mapping(uint => investments)) public investement;
@@ -68,16 +69,42 @@ contract UserRegister {
 
         console.log("Invested time is",investement[msg.sender][profile[msg.sender].count].investedTime);
         console.log("No.",profile[msg.sender].count,"investment is",investement[msg.sender][profile[msg.sender].count].amount);
-
+     
 
         profile[msg.sender].count++;
+
        
         if(profile[msg.sender].count == 0){
         payable(profile[msg.sender].referrer).transfer(bonus);
         console.log("bonus is", bonus);
         }
-        
-
-
     }
+
+    /**
+     *@dev Checks the rate iof interest obtained till date.
+     *Requirements : 
+     * - the caller should be registered.
+     * - the count should be a valid count with investment.
+     *@param _count represents the count of the investment made.
+     *Note : This function will check your duration of investemnt and  sets the interest according to the duration and amount; 
+     */
+    function checkInterest (uint _count) public {
+        require(profile[msg.sender].myAddress!=address(0),"User not registered");
+        require(investement[msg.sender][_count].amount != 0, "No investment found");
+        uint timePeriod = block.timestamp - investement[msg.sender][_count].investedTime;
+        require(timePeriod>2592000,"You havent reached any maturity period");
+         
+        uint duration = timePeriod/2592000;
+
+        uint roi = (investement[msg.sender][_count].amount*50)/1000; 
+
+        investement[msg.sender][_count].interest =  duration * roi ;
+    }
+
+
+    
+
+
+
+    
 }

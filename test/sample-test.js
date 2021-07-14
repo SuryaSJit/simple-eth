@@ -66,5 +66,19 @@ describe("Register",  () => {
 
 
     })
+    it('Should return any interest is there', async () =>{
+      await user.connect(addr1).register(owner.address);
+      expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
+      await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
+
+      await user.connect(addr1).invest({value:500});
+
+      await user.connect(addr1).checkInterest(0);
+      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('User not registered');
+      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('No investment found');
+      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('You havent reached any maturity period');
+
+
+    })
   })
 });
