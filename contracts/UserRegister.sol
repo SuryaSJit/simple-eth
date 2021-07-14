@@ -92,13 +92,15 @@ contract UserRegister {
         require(profile[msg.sender].myAddress!=address(0),"User not registered");
         require(investement[msg.sender][_count].amount != 0, "No investment found");
         uint timePeriod = block.timestamp - investement[msg.sender][_count].investedTime;
+        timePeriod = timePeriod + 2592000;
         require(timePeriod>2592000,"You havent reached any maturity period");
          
         uint duration = timePeriod/2592000;
-
+        console.log("Duration is",duration);
         uint roi = (investement[msg.sender][_count].amount*50)/1000; 
 
         investement[msg.sender][_count].interest =  duration * roi ;
+        console.log("Interest obtained is",investement[msg.sender][_count].interest);
     }
 
 

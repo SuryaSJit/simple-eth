@@ -1,4 +1,4 @@
-const { expect } = require("chai");
+const { expect, should } = require("chai");
 
 describe("Register",  () => {
 
@@ -74,10 +74,41 @@ describe("Register",  () => {
       await user.connect(addr1).invest({value:500});
 
       await user.connect(addr1).checkInterest(0);
-      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('User not registered');
-      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('No investment found');
-      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('You havent reached any maturity period');
 
+
+    })
+
+    it('Should return user not registerd',async () =>{
+      await user.connect(addr1).register(owner.address);
+      expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
+      await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
+
+      await user.connect(addr1).invest({value:500});
+
+      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('User not registered');
+      await user.connect(addr1).checkInterest(0);
+
+    })
+    it('Should return user not invested',async () =>{
+      await user.connect(addr1).register(owner.address);
+      expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
+      await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
+
+      await user.connect(addr1).invest({value:500});
+
+      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('No investment found');
+      await user.connect(addr1).checkInterest(0);
+
+    })
+    it('Should return user not reached maturity period',async () =>{
+      await user.connect(addr1).register(owner.address);
+      expect((await user.profile(addr1.address)).referrer).to.be.eq(owner.address);
+      await expect(user.connect(addr1).register(owner.address)).to.be.revertedWith('User already registered');
+
+      await user.connect(addr1).invest({value:500});
+
+      await expect(user.connect(addr1).checkInterest(0)).to.be.revertedWith('You havent reached any maturity period');
+      await user.connect(addr1).checkInterest(0);
 
     })
   })
