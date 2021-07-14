@@ -26,7 +26,12 @@ contract UserRegister {
     mapping(address => user) public profile;
 
     /**
-     *@dev Registers user 
+     *@dev Registers user and stores data
+     *Requirements : 
+     * - should not be a registered user.
+     *@param _referrer represents the address of the user's referrer.
+     *Note: This function will register user with a referrer
+     *Already registered users cant avail this function.
      */
 
     function register (address _referrer) public {
@@ -41,6 +46,17 @@ contract UserRegister {
         
 
 }
+    /**
+     *@dev User can invest amount.
+     *As per the invest amount a percent is given to the referrer as bonus.
+     *Requirement : 
+     * - Investor should have a minimum balance to invest.
+     *Note : This function will allow user to invest an amount not less than a given amount.
+     *The referrer will be recieving a 10% of invested amount as bonus for every new investment made.
+     *The investment can be done multiple times.The data will be stored in an array.
+     *Also the investemnt time will registered to the same index;
+     */
+
     function invest () public payable{
         require(msg.value >= 10  ,"Should have a minimum  to invest" );
 
