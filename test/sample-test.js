@@ -71,35 +71,35 @@ describe("Register",  () => {
     it('Should return any interest is there', async () =>{
       await user.connect(addr1).register(owner.address,{value:20});
       await user.connect(addr1).invest({value:500});
-      await user.connect(addr1).ROI(1);
+      await user.connect(addr1).ROI();
 
       await user.connect(addr2).register(addr1.address,{value:20});
       await user.connect(addr2).invest({value:500});
-      await user.connect(addr2).ROI(1);
+      await user.connect(addr2).ROI();
     })
 
     it('Should return user not registerd',async () =>{
       await user.connect(addr1).register(owner.address,{value:20});
       await user.connect(addr1).invest({value:500});
-      await user.connect(addr1).ROI(0);
-      await expect(user.connect(addr3).ROI(1)).to.be.revertedWith('User not registered');
+      await user.connect(addr1).ROI();
+      await expect(user.connect(addr3).ROI()).to.be.revertedWith('User not registered');
 
       await user.connect(addr2).register(addr1.address,{value:20});
       await user.connect(addr2).invest({value:500});
-      await user.connect(addr2).ROI(0);
-      await expect(user.connect(addr3).ROI(1)).to.be.revertedWith('User not registered');
+      await user.connect(addr2).ROI();
+      await expect(user.connect(addr3).ROI()).to.be.revertedWith('User not registered');
 
     })
     it('Should return user not invested',async () =>{
       await user.connect(addr1).register(owner.address,{value:20});
-      await user.connect(addr1).invest({value:500});
-      await user.connect(addr1).ROI(1);
-      await expect(user.connect(addr1).ROI(3)).to.be.revertedWith('No investment found');
+      await user.connect(addr1).invest({value:110});
+      await user.connect(addr1).ROI();
+      await expect(user.connect(addr1).ROI()).to.be.revertedWith('No investment found');
 
       await user.connect(addr2).register(addr1.address,{value:20});
-      await user.connect(addr2).invest({value:500});
-      await user.connect(addr2).ROI(1);
-      await expect(user.connect(addr2).ROI(3)).to.be.revertedWith('No investment found');
+      await user.connect(addr2).invest({value:110});
+      await user.connect(addr2).ROI();
+      await expect(user.connect(addr2).ROI()).to.be.revertedWith('No investment found');
 
     }) 
   })

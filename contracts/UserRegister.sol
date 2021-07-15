@@ -15,6 +15,7 @@ contract UserRegister {
         address referrer;
         uint registration_time;
         uint count;
+        uint totalROI;
     }
   struct investments{ 
       uint amount;
@@ -78,18 +79,19 @@ contract UserRegister {
      *Requirements : 
      * - the caller should be registered.
      * - the count should be a valid count with investment.
-     *@param _count represents the count of the investment made.
      *Note : This function will check your duration of investemnt and  sets the interest according to the duration and amount; 
      */
-    function ROI (uint _count) public {
+    function ROI () public {
         require(profile[msg.sender].count!=0,"User not registered");
-        require(investement[msg.sender][_count].amount != 0, "No investment found");
-        uint time = block.timestamp - investement[msg.sender][_count].investedTime;
-        require(time>0,"You havent reached any maturity period");
-         
-        uint duration = time;
-        uint roi = (investement[msg.sender][_count].amount*50)/1000; 
-
-        investement[msg.sender][_count].interest =  duration * roi ;
+        uint totalInterest;
+        for (uint i=0;i<profile[msg.sender].count;i++){
+            require(investement[msg.sender][i].amount != 0, "No investment found");
+            uint duration  = block.timestamp - investement[msg.sender][i].investedTime;
+            require(duration>0,"You havent reached any maturity period"); 
+            uint roi = (investement[msg.sender][i].amount*50)/1000; 
+            investement[msg.sender][i].interest =  duration * roi ;
+            totalInterest = totalInterest + investement[msg.sender][i].interest;
+        }
+        profile[msg.sender].totalROI = totalInterest;     
     }    
 }
