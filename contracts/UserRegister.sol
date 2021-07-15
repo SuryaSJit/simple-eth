@@ -75,19 +75,17 @@ contract UserRegister {
     }
 
     /**
-     *@dev Checks the rate iof interest obtained till date.
+     *@dev Checks the rate of interest of investments obtained till date.
      *Requirements : 
      * - the caller should be registered.
      * - the count should be a valid count with investment.
-     *Note : This function will check your duration of investemnt and  sets the interest according to the duration and amount; 
+     *Note : This function will check your duration of investemnt and  sets the interest according to the duration and amount and calculates the total Rate of Interest; 
      */
     function ROI () public {
         require(profile[msg.sender].count!=0,"User not registered");
         uint totalInterest;
         for (uint i=0;i<profile[msg.sender].count;i++){
-            require(investement[msg.sender][i].amount != 0, "No investment found");
-            uint duration  = block.timestamp - investement[msg.sender][i].investedTime;
-            require(duration>0,"You havent reached any maturity period"); 
+            uint duration  = block.timestamp - investement[msg.sender][i].investedTime; 
             uint roi = (investement[msg.sender][i].amount*50)/1000; 
             investement[msg.sender][i].interest =  duration * roi ;
             totalInterest = totalInterest + investement[msg.sender][i].interest;

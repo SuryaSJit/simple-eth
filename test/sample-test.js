@@ -90,17 +90,17 @@ describe("Register",  () => {
       await expect(user.connect(addr3).ROI()).to.be.revertedWith('User not registered');
 
     })
-    it('Should return user not invested',async () =>{
-      await user.connect(addr1).register(owner.address,{value:20});
-      await user.connect(addr1).invest({value:110});
-      await user.connect(addr1).ROI();
-      await expect(user.connect(addr1).ROI()).to.be.revertedWith('No investment found');
+    // it('Should return user not invested',async () =>{
+    //   await user.connect(addr1).register(owner.address,{value:20});
+    //   await user.connect(addr1).invest({value:110});
+    //   await user.connect(addr1).ROI();
+    //   await expect(user.connect(addr1).ROI()).to.be.revertedWith('No investment found');
 
-      await user.connect(addr2).register(addr1.address,{value:20});
-      await user.connect(addr2).invest({value:110});
-      await user.connect(addr2).ROI();
-      await expect(user.connect(addr2).ROI()).to.be.revertedWith('No investment found');
+    //   await user.connect(addr2).register(addr1.address,{value:20});
+    //   await user.connect(addr2).invest({value:110});
+    //   await user.connect(addr2).ROI();
+    //   await expect(user.connect(addr2).ROI()).to.be.revertedWith('No investment found');
 
-    }) 
+    // }) 
   })
 });
