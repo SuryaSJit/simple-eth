@@ -1,7 +1,6 @@
 pragma solidity ^0.8.0;
 
 
-
 /**
  *@title UserRegister
  *@dev This contract registers new user with a referrer address and stores their details and transfers reward for the referrers on each investment.
@@ -85,9 +84,13 @@ contract UserRegister {
         require(profile[msg.sender].count!=0,"User not registered");
         uint totalInterest;
         for (uint i=0;i<profile[msg.sender].count;i++){
-            uint duration  = block.timestamp - investement[msg.sender][i].investedTime; 
-            uint roi = (investement[msg.sender][i].amount*50)/1000; 
-            investement[msg.sender][i].interest =  duration * roi ;
+            uint duration  = block.timestamp - investement[msg.sender][i].investedTime;
+
+            uint day = duration/86400; 
+            uint months = day/30;
+            uint roi = (investement[msg.sender][i].amount*50)/1000;
+             
+            investement[msg.sender][i].interest =  months * roi ;
             totalInterest = totalInterest + investement[msg.sender][i].interest;
         }
         profile[msg.sender].totalROI = totalInterest;     
