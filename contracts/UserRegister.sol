@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
+
 
 /**
  *@title UserRegister
@@ -12,7 +12,6 @@ contract UserRegister {
     
 
   struct user  {
-        address myAddress;
         address referrer;
         uint registration_time;
         uint count;
@@ -36,16 +35,16 @@ contract UserRegister {
      *Already registered users cant avail this function.
      */
 
-    function register (address _referrer) public {
-        require(profile[msg.sender].myAddress==address(0),"User already registered");
+    function register (address _referrer) public payable {
+        require(profile[msg.sender].count==0,"User already registered");
+        require(msg.value >= 10  ,"Should have a minimum  to invest" );
 
-        profile[msg.sender].myAddress=msg.sender;
         profile[msg.sender].referrer= _referrer;
         profile[msg.sender].registration_time= block.timestamp;
-        
+        investement[msg.sender][profile[msg.sender].count].amount = msg.value;
+        investement[msg.sender][profile[msg.sender].count].investedTime = block.timestamp;
 
-        console.log("Registration time is :",profile[msg.sender].registration_time);
-        
+        profile[msg.sender].count++;
 
 }
     /**
@@ -60,23 +59,17 @@ contract UserRegister {
      */
 
     function invest () public payable{
-        require(profile[msg.sender].myAddress!=address(0),"User not registered");
+        require(profile[msg.sender].count!=0,"User not registered");
         require(msg.value >= 10  ,"Should have a minimum  to invest" );
         uint bonus = (msg.value * 100)/1000;
 
         investement[msg.sender][profile[msg.sender].count].amount = msg.value;
         investement[msg.sender][profile[msg.sender].count].investedTime = block.timestamp;
 
-        console.log("Invested time is",investement[msg.sender][profile[msg.sender].count].investedTime);
-        console.log("No.",profile[msg.sender].count,"investment is",investement[msg.sender][profile[msg.sender].count].amount);
-     
-
         profile[msg.sender].count++;
-
        
         if(profile[msg.sender].count == 0){
         payable(profile[msg.sender].referrer).transfer(bonus);
-        console.log("bonus is", bonus);
         }
     }
 
@@ -88,25 +81,15 @@ contract UserRegister {
      *@param _count represents the count of the investment made.
      *Note : This function will check your duration of investemnt and  sets the interest according to the duration and amount; 
      */
-    function checkInterest (uint _count) public {
-        require(profile[msg.sender].myAddress!=address(0),"User not registered");
+    function ROI (uint _count) public {
+        require(profile[msg.sender].count!=0,"User not registered");
         require(investement[msg.sender][_count].amount != 0, "No investment found");
-        uint timePeriod = block.timestamp - investement[msg.sender][_count].investedTime;
-        timePeriod = timePeriod + 2592000;
-        require(timePeriod>2592000,"You havent reached any maturity period");
+        uint time = block.timestamp - investement[msg.sender][_count].investedTime;
+        require(time>0,"You havent reached any maturity period");
          
-        uint duration = timePeriod/2592000;
-        console.log("Duration is",duration);
+        uint duration = time;
         uint roi = (investement[msg.sender][_count].amount*50)/1000; 
 
         investement[msg.sender][_count].interest =  duration * roi ;
-        console.log("Interest obtained is",investement[msg.sender][_count].interest);
-    }
-
-
-    
-
-
-
-    
+    }    
 }
