@@ -1,6 +1,5 @@
 pragma solidity ^0.8.0;
 
-
 /**
  *@title UserRegister
  *@dev This contract registers new user with a referrer address and stores their details and transfers reward for the referrers on each investment.
@@ -10,16 +9,16 @@ contract UserRegister {
 
     
 
-  struct user  {
+    struct user  {
         address referrer;
         uint registration_time;
         uint count;
         uint totalROI;
     }
-  struct investments{ 
-      uint amount;
-      uint investedTime;
-      uint interest;
+    struct investments{ 
+        uint amount;
+        uint investedTime;
+        uint interest;
     }
     mapping(address => user) public profile;
     mapping(address =>mapping(uint => investments)) public investement;
@@ -45,7 +44,6 @@ contract UserRegister {
         investement[msg.sender][profile[msg.sender].count].investedTime = block.timestamp;
 
         profile[msg.sender].count++;
-
 }
     /**
      *@dev User can invest amount.
@@ -85,11 +83,11 @@ contract UserRegister {
         uint totalInterest;
         for (uint i=0;i<profile[msg.sender].count;i++){
             uint duration  = block.timestamp - investement[msg.sender][i].investedTime;
-
             uint day = duration/86400; 
+
             uint months = day/30;
             uint roi = (investement[msg.sender][i].amount*50)/1000;
-             
+ 
             investement[msg.sender][i].interest =  months * roi ;
             totalInterest = totalInterest + investement[msg.sender][i].interest;
         }
